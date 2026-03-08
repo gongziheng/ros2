@@ -1,0 +1,35 @@
+<!-- 机器人的左右轮子 -->
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find my_robot)/urdf/common_inertial.xacro"/>
+    <xacro:macro name="wheel" params="prefix side">
+        <link name="${prefix}_${side}_wheel">
+            <!-- 视觉 -->
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.05"/>
+                </geometry>
+                <material name="black">
+            </visual>
+            <!-- 碰撞 -->
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.05"/>
+                </geometry>
+            </collision>
+            <!-- 质量与惯性 -->
+            <xacro:cylinder_inertial m="0.2" r="0.05" h="0.05"/>
+        </link>
+
+        <!-- 关节 -->
+        <joint name="${prefix}_${side}_wheel_joint" type="continuous">
+            <parent link="${prefix}_base_link"/>
+            <child link="${prefix}_${side}_wheel"/>
+            <!-- 轮子中心位置：x = -0.15（靠近后部），y 根据左右调整（0.3 / 2 + 0.05，使车轮在外部），z = 0.05（使轮子接地） -->
+            <origin xyz="-0.15 ${side == 'left' ? -0.2 : 0.2} 0.05" rpy="0 0 0"/>
+            <axis xyz="0 1 0"/> <!-- 绕 y 轴旋转 -->
+        </joint>
+    </xacro:macro>
+</robot>

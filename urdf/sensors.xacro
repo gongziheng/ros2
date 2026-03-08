@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find my_robot)/urdf/common_inertial.xacro"/>
+    <!-- 激光雷达 -->
+    <xacro:macro name="lidar" params="prefix">
+        <link name="${prefix}_lidar_link">
+            <visual>
+                <!-- 圆柱默认原点是在中心，设置z=0.05则原点在底面 -->
+                <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.1"/>
+                </geometry>
+                <material name="red" />
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.05" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <cylinder radius="0.05" length="0.1"/>
+                </geometry>
+            </collision>
+            <xacro:cylinder_inertial m="0.1" r="0.05" h="0.1"/>
+        </link>
+        <joint name="{prefix_lidar_joint}" type="fixed">
+            <parent link="{prefix}_base_link"/>
+            <child link="{prefix}_lidar_link"/>
+            <!-- 安装位置：底盘前方中心（0.2-r），离地0.15（雷达底面离地0.15） -->
+            <!-- 父坐标系：底盘底盘的几何中心，虽然抬高了0.05，但是坐标系原点不变 -->
+            <origin xyz="0.2 0.0 0.15" rpy="0.0 0.0 0.0"/>
+        </joint>
+    </xacro:macro>
+    
+    <!-- 相机 -->
+    <xacro:macro name="camera" params="prefix">
+        <link name="${prefix}_camera_link">
+            <visual>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.05 0.05 0.05"/>
+                </geometry>
+                <material name="blue" />
+            </visual>
+            <collision>
+                <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+                <geometry>
+                    <box size="0.05 0.05 0.05"/>
+                </geometry>
+            </collision>
+            <xacro:box_inertial m="0.05" w="0.05" h="0.05" d="0.05"/>
+        </link>
+        <joint name="${prefix}_camera_joint" type="fixed">
+            <parent link="${prefix}_base_link"/>
+            <child link="${prefix}_camera_link"/>
+            <!-- 安装位置：底盘前方稍靠后，中心高度0.2 -->
+            <origin xyz="0.1 0 0.2" rpy="0 0 0"/>
+        </joint>
+    </xacro:macro>
+</robot>
