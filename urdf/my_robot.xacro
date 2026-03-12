@@ -1,20 +1,20 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="my_robot">
+    <!-- 机器人命名空间前缀 -->
+    <xacro:property name="prefix" value="robot"/>
+
     <xacro:include filename="$(find my_robot)/urdf/materials.xacro"/>
     <xacro:include filename="$(find my_robot)/urdf/common_inertial.xacro"/>
     <xacro:include filename="$(find my_robot)/urdf/chassis.xacro"/>
     <xacro:include filename="$(find my_robot)/urdf/wheels.xacro"/>
     <xacro:include filename="$(find my_robot)/urdf/sensors.xacro"/>
 
-    <!-- 机器人命名空间前缀 -->
-    <xacro:property name="prefix" value="robot"/>
-
     <!-- 实例化部件 -->
     <xacro:chassis prefix="${prefix}"/>
     <xacro:wheel prefix="${prefix}" side="left"/>
     <xacro:wheel prefix="${prefix}" side="right"/>
-    <xacro:lidar prefix="${prefix}"/>
-    <xacro:camera prefix="${prefix}"/>
+    <!-- <xacro:lidar prefix="${prefix}"/>
+    <xacro:camera prefix="${prefix}"/> -->
 
     <!-- Gazebo 差速驱动插件 -->
     <gazebo>
@@ -25,8 +25,8 @@
                 <remapping>odom:=odom</remapping>
             </ros>
             <update_rate>30.0</update_rate>
-            <left_wheel>${prefix}_left_wheel_joint</left_wheel>
-            <right_wheel>${prefix}_right_wheel_joint</right_wheel>
+            <left_joint>${prefix}_left_wheel_joint</left_joint>
+            <right_joint>${prefix}_right_wheel_joint</right_joint>
             <wheel_separation>0.4</wheel_separation>
             <wheel_diameter>0.1</wheel_diameter>
             <max_wheel_torque>20</max_wheel_torque>
@@ -35,88 +35,11 @@
             <odometry_topic>odom</odometry_topic> -->
             <!-- 输出 -->
             <publish_odom>true</publish_odom>
-            <puplish_odom_tf>true</puplish_odom_tf>
+            <publish_odom_tf>true</publish_odom_tf>
             <publish_wheel_tf>true</publish_wheel_tf>
 
             <odometry_frame>odom</odometry_frame>
             <robot_base_frame>${prefix}_base_link</robot_base_frame>
         </plugin>
-    </gazebo>
-
-    <!-- Gazebo 激光雷达插件（使用 GPU 加速） -->
-    <gazebo reference="${prefix}_lidar_link">
-      <sensor name="lidar" type="gpu_ray">  <!-- 若需 CPU，改为 type="ray" -->
-        <pose>0 0 0 0 0 0</pose>
-        <topic>/points</topic>
-        <update_rate>10</update_rate>
-        <ray>
-          <scan>
-            <horizontal>
-              <samples>360</samples>
-              <resolution>1</resolution>
-              <min_angle>-3.14159</min_angle>
-              <max_angle>3.14159</max_angle>
-            </horizontal>
-            <vertical>
-              <samples>16</samples>
-              <min_angle>-0.261799</min_angle>  <!-- -15° -->
-              <max_angle>0.261799</max_angle>    <!-- 15° -->
-            </vertical>
-          </scan>
-          <range>
-            <min>0.5</min>
-            <max>30.0</max>
-            <resolution>0.01</resolution>
-          </range>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.01</stddev>
-          </noise>
-        </ray>
-        <plugin name="gazebo_ros_ray_sensor" filename="libgazebo_ros_ray_sensor.so">
-          <ros>
-            <namespace>/</namespace>
-            <remapping>~/points:=points</remapping>  <!-- 使用重映射 -->
-          </ros>
-          <output_type>sensor_msgs/PointCloud2</output_type>
-          <frame_name>${prefix}_lidar_link</frame_name>
-        </plugin>
-      </sensor>
-    </gazebo>
-
-     <!-- Gazebo 相机插件 -->
-    <gazebo reference="${prefix}_camera_link">
-      <sensor name="camera" type="camera">
-        <pose>0 0 0 0 0 0</pose>
-        <topic>/camera/image_raw</topic>
-        <update_rate>30</update_rate>
-        <camera>
-          <horizontal_fov>1.0472</horizontal_fov> <!-- 60° -->
-          <image>
-            <width>640</width>
-            <height>480</height>
-            <format>R8G8B8</format>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>100</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.01</stddev>
-          </noise>
-        </camera>
-        <plugin name="gazebo_ros_camera" filename="libgazebo_ros_camera.so">
-          <ros>
-            <namespace>/</namespace>
-            <remapping>~/image_raw:=camera/image_raw</remapping>
-            <remapping>~/camera_info:=camera/camera_info</remapping>
-          </ros>
-          <camera_name>camera</camera_name>
-          <frame_name>${prefix}_camera_link</frame_name>
-        </plugin>
-      </sensor>
     </gazebo>
 </robot>

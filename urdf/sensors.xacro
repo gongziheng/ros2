@@ -20,9 +20,9 @@
             </collision>
             <xacro:cylinder_inertial m="0.1" r="0.05" h="0.1"/>
         </link>
-        <joint name="{prefix_lidar_joint}" type="fixed">
-            <parent link="{prefix}_base_link"/>
-            <child link="{prefix}_lidar_link"/>
+        <joint name="${prefix}_lidar_joint" type="fixed">
+            <parent link="${prefix}_base_link"/>
+            <child link="${prefix}_lidar_link"/>
             <!-- 安装位置：底盘前方中心（0.2-r），离地0.15（雷达底面离地0.15） -->
             <!-- 父坐标系：底盘底盘的几何中心，虽然抬高了0.05，但是坐标系原点不变 -->
             <origin xyz="0.2 0.0 0.15" rpy="0.0 0.0 0.0"/>

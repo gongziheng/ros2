@@ -1,16 +1,15 @@
-<!-- 机器人的底盘 -->
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
     <xacro:include filename="$(find my_robot)/urdf/common_inertial.xacro"/>
     <xacro:macro name="chassis" params="prefix">
-        <link name="{prefix}_base_link">
+        <link name="${prefix}_base_link">
             <!-- 视觉 -->
             <visual>
                 <origin xyz="0 0 0.05" rpy="0 0 0"/>
                 <geometry>
                     <box size="0.4 0.3 0.1"/>
                 </geometry>
-                <material name="darkgray"/>
+                <material name="dark_grey"/>
             </visual>
             <!-- 碰撞属性 -->
             <collision>

@@ -7,7 +7,7 @@ def generate_launch_description():
     # 获取默认路径
     robot_name_in_model = "my_robot"
     pkg_my_robot = get_package_share_directory('my_robot')
-    default_model_path = pkg_my_robot + "/urdf/my_robot.urdf"
+    default_model_path = pkg_my_robot + "/urdf/my_robot.xacro"
     default_world_path = pkg_my_robot + "/worlds/simple.world"
 
     # 为launch声明参数 model
@@ -18,10 +18,8 @@ def generate_launch_description():
     # 获取文件内容生成新的参数
     robot_description = launch_ros.parameter_descriptions.ParameterValue(
         launch.substitutions.Command(
-            ['cat ', launch.substitutions.LaunchConfiguration('model')],
-            value_type=str
-        )
-    )
+            ['xacro ', launch.substitutions.LaunchConfiguration('model')]),
+            value_type=str)
 
     # 状态发布节点
     robot_state_publisher_node = launch_ros.actions.Node(
@@ -39,7 +37,7 @@ def generate_launch_description():
     # 通过IncludeLaunchDescription包含gazebo_ros的launch文件来启动gazebo
     gazebo_launch = launch.actions.IncludeLaunchDescription(
         PythonLaunchDescriptionSource([get_package_share_directory('gazebo_ros'), 
-                                      '/launch', 
+                                      '/launch',
                                       '/gazebo.launch.py']),
         launch_arguments=[('world', default_world_path), ('verbose', 'true')]
     )
